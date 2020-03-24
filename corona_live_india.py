@@ -22,9 +22,28 @@ except err.URLError:
     print("Data Error! Failed to fetch the data.")
 else:
     # Get data date.
-    update = re.search(r"\bas on (.+)\)", raw.decode())
     
-    soup = bs(raw, features="html.parser")
+    # 2020/03/22 - Note:
+    # This regex is not working due to a 
+    # slight change in page's html.
+    # update = re.search(r"\bas on (.+)\)", raw.decode())
+    
+    # 2020/03/22 - Quick Fix:
+    # New regex to get the date.
+    update = re.search(r"\(\*including foreign nationals, as on (.+)\)", raw.decode())
+    
+    # 2020/03/24 - Quick Fix:
+    # Unable to properly find table.
+    # Dynamic table location
+    # update according to update regex's 
+    # location.
+    table_at = update.span()[0]
+    
+    # 2020/03/23 - Quick Fix:
+    # Get only the info table.
+    tablepart = raw[table_at:]
+    
+    soup = bs(tablepart, features="html.parser")
     table = soup.find("table")
     
     # Save all the data in a 2d list.
